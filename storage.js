@@ -10,7 +10,7 @@ var dal = {
 		MongoClient.connect(url, function (error, db) {
 			if (error)
 				throw new Error(error);
-			console.log("Connected successfully to server");
+			console.log("Connected successfully");
 			result(db);
 		});
 	},
@@ -36,9 +36,9 @@ var dal = {
 				//callback(result);
 				db.close();
 			});
-		})
+		});
 	},
-	insertContent: function (drone, callback) {
+	insertFile: function (drone, callback) {
 		this.connect(null, function (db) {
 			db.collection('files').insert(drone, function (err, result) {
 				//callback(result);
@@ -52,7 +52,7 @@ var dal = {
 				//callback(result);
 				db.close();
 			});
-		})
+		});
 	},
 	insertContent: function (drone, callback) {
 		this.connect(null, function (db) {
