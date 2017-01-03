@@ -54,60 +54,66 @@ dal.clearFile();
 dal.clearContent();
 
 request(dronesSettings, function (error, response, dronesString) {
-var drones = JSON.parse(dronesString);
-        // console.log(drones);
-        console.log("***************************************************************************");
-        drones.forEach(function (drone) {
+    var drones = JSON.parse(dronesString);
+    // console.log(drones);
+    console.log("***************************************************************************");
+    drones.forEach(function (drone) {
         var droneSettings = new Settings("/drones/" + drone.id + "?format=json");
-                request(droneSettings, function (error, response, droneString) {
-                var drone = JSON.parse(droneString);
-                        dal.insertDrone(new Drone(
-                                drone.id,
-                                drone.name,
-                                drone.mac_address,
-                                drone.location,
-                                drone.last_packet_date,
-                                drone.files,
-                                drone.files_count
-                                ));
-                        var filesSetting = new Settings("/files?drone_id.is=" + drone.id + "&format=json&date_loaded.greaterOrEqual=2016-12-21");
-                        request(filesSetting, function (error, response, filesString) {
-                        var files = JSON.parse(filesString);
-                                //console.log(files);
-                                files.forEach(function (file) {
-                                var fileDetailSetting = new Settings("/files/" + file.id + "?format=json");
-                                        //console.log(fileDetailSetting);
-                                        request(fileDetailSetting, function (error, response, fileDetailString) {
-                                        var file = JSON.parse(fileDetailString);
-                                                dal.insertFile(
-                                                        new File(
-                                                                file.id,
-                                                                file.date_loaded,
-                                                                file.date_first_record,
-                                                                file.date_last_record,
-                                                                file.url,
-                                                                file.ref,
-                                                                file.contents,
-                                                                file.contents_count,
-                                                                drone.id
-                                                                ));
-                                                var contentSetting = new Settings("/files/" + file.id + "/contents?format=json&embed");
-                                                request(contentSetting, function (error, response, ContentString) {
-                                                var content = JSON.parse(contentSetting);
-                                                        dal.insertContent(
-                                                                new Content(
-                                                                        content.id,
-                                                                        content.mac_address,
-                                                                        content.datetime,
-                                                                        content.rssi,
-                                                                        content.url,
-                                                                        content.ref
-                                                                        ));
-                                                });
-                                        });
-                                });
-                        });
+        request(droneSettings, function (error, response, droneString) {
+            var drone = JSON.parse(droneString);
+            dal.insertDrone(new Drone(
+                    drone.id,
+                    drone.name,
+                    drone.mac_address,
+                    drone.location,
+                    drone.last_packet_date,
+                    drone.files,
+                    drone.files_count
+                    ));
+            var filesSetting = new Settings("/files?drone_id.is=" + drone.id + "&format=json&date_loaded.greaterOrEqual=2016-12-21");
+            request(filesSetting, function (error, response, filesString) {
+                var files = JSON.parse(filesString);
+                //console.log(files);
+                files.forEach(function (file) {
+                    var fileDetailSetting = new Settings("/files/" + file.id + "?format=json");
+                    //console.log(fileDetailSetting);
+                    request(fileDetailSetting, function (error, response, fileDetailString) {
+                        var file = JSON.parse(fileDetailString);
+                        dal.insertFile(
+                                new File(
+                                        file.id,
+                                        file.date_loaded,
+                                        file.date_first_record,
+                                        file.date_last_record,
+                                        file.url,
+                                        file.ref,
+                                        file.contents,
+                                        file.contents_count,
+                                        drone.id
+                                        ));
+                        var contentSetting = new Settings("/files/" + file.id + "/contents?format=json&embed");
+                        request(contentSetting, function (error, response, ContentString) {
+                            try {
+                                var content = JSON.parse(contentSetting);
+                                dal.insertContent(
+                                        new Content(
+                                                content.id,
+                                                content.mac_address,
+                                                content.datetime,
+                                                content.rssi,
+                                                content.url,
+                                                content.ref
+                                                ));
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }
+                        );
+                    });
                 });
+            });
         });
-});
+    });
+})
+        ;
 
