@@ -1,0 +1,17 @@
+{
+  "name": "ex8-li-karwin",
+  "version": "1.0.0",
+  "keywords": [
+    "util",
+    "functional",
+    "server",
+    "client",
+    "browser"
+  ],
+  "author": "diosje",
+  "contributors": [],
+  "dependencies": {
+    "mongodb": "^2.2.19",
+    "request": "^2.79.0"
+  }
+}
