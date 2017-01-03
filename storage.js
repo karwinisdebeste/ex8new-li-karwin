@@ -43,6 +43,7 @@ var dal = {
 			db.collection('files').insert(drone, function (err, result) {
 				//callback(result);
 				db.close();
+                                console.log("savedFile")
 			});
 		});
 	},
@@ -59,6 +60,7 @@ var dal = {
 			db.collection('contents').insert(drone, function (err, result) {
 				//callback(result);
 				db.close();
+                                console.log("savedFile")
 			});
 		});
 	}
