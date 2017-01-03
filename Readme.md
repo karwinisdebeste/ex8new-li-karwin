@@ -10,5 +10,16 @@ Installatie van Mongoose(niet gebruikt maar geprobeerd)
 Storage:
 v2. Added: 
 		Insert &clear:
-						-File 
-						-Content 
+			-File 
+			-Content 
+Main: 	
+v2. Added: 
+	filesSettings : Foreach used
+	contentSetting: Not an array
+
+v3: Added TryCatch to see error
+    Not sure if its right implemented.
+    Only used at contentsettings
+
+Error:
+SyntaxError: Unexpected token o in JSON at position 1
