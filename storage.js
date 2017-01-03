@@ -20,7 +20,7 @@ var dal = {
 				//callback(result);
 				db.close();
 			});
-		})
+		});
 	},
 	insertDrone: function (drone, callback) {
 		this.connect(null, function (db) {
@@ -29,7 +29,40 @@ var dal = {
 				db.close();
 			});
 		});
+	},
+        clearFile: function (call) {
+		this.connect(null, function (db) {
+			db.collection('files').drop(function (err, result) {
+				//callback(result);
+				db.close();
+			});
+		})
+	},
+	insertContent: function (drone, callback) {
+		this.connect(null, function (db) {
+			db.collection('files').insert(drone, function (err, result) {
+				//callback(result);
+				db.close();
+			});
+		});
+	},
+        clearContent: function (call) {
+		this.connect(null, function (db) {
+			db.collection('contents').drop(function (err, result) {
+				//callback(result);
+				db.close();
+			});
+		})
+	},
+	insertContent: function (drone, callback) {
+		this.connect(null, function (db) {
+			db.collection('contents').insert(drone, function (err, result) {
+				//callback(result);
+				db.close();
+			});
+		});
 	}
+        
 };
 
 module.exports = dal;
