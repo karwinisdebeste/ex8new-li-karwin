@@ -49,17 +49,17 @@ var Content = function (id, mac, datetime, rssi, url, ref) {
 
 var dronesSettings = new Settings("/drones?format=json");
 
-dal.clearDrone();
-dal.clearFile();
-dal.clearContent();
+dal.clearDrone(); //delete collection drones
+dal.clearFile();//delete collection fields
+dal.clearContent();//delete collection contents
 
 request(dronesSettings, function (error, response, dronesString) {
     var drones = JSON.parse(dronesString);
     // console.log(drones);
     console.log("***************************************************************************");
-    drones.forEach(function (drone) {
+    drones.forEach(function (drone) { //for each drone in list
         var droneSettings = new Settings("/drones/" + drone.id + "?format=json");
-        request(droneSettings, function (error, response, droneString) {
+        request(droneSettings, function (error, response, droneString) { // list all file headers for all drones
             var drone = JSON.parse(droneString);
             dal.insertDrone(new Drone(
                     drone.id,
@@ -74,7 +74,7 @@ request(dronesSettings, function (error, response, dronesString) {
             request(filesSetting, function (error, response, filesString) {
                 var files = JSON.parse(filesString);
                 //console.log(files);
-                files.forEach(function (file) {
+                files.forEach(function (file) { //for each drone in list
                     var fileDetailSetting = new Settings("/files/" + file.id + "?format=json");
                     //console.log(fileDetailSetting);
                     request(fileDetailSetting, function (error, response, fileDetailString) {
@@ -91,29 +91,34 @@ request(dronesSettings, function (error, response, dronesString) {
                                         file.contents_count,
                                         drone.id
                                         ));
-                        var contentSetting = new Settings("/files/" + file.id + "/contents?format=json&embed");
-                        request(contentSetting, function (error, response, ContentString) {
-                            try {
-                                var content = JSON.parse(contentSetting);
-                                dal.insertContent(
-                                        new Content(
-                                                content.id,
-                                                content.mac_address,
-                                                content.datetime,
-                                                content.rssi,
-                                                content.url,
-                                                content.ref
-                                                ));
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }
-                        );
+                        var contentsSettings = new Settings("/files/" + file.id + "/contents?format=json");
+                        request(contentsSettings, function (error, response, contentsString) {
+                            var contents = JSON.parse(contentsString);
+                            /*console.log(contents);
+                             console.log("***************************************************************************");*/
+
+                            contents.forEach(function (content) {
+                                var contentSettings = new Settings("/files/" + file.id + "/contents/" + content.id + "?format=json");
+                                request(contentSettings, function (error, response, contentString) {
+                                    var content = JSON.parse(contentString);
+                                    //console.log(content);
+                                    dal.insertContent(new Content(
+                                            content.id,
+                                            content.mac_address,
+                                            content.datetime,
+                                            content.rssi,
+                                            content.url,
+                                            content.ref,
+                                            file.id,
+                                            drone.id));
+
+                                });
+                            });
+                        });
                     });
                 });
             });
         });
     });
-})
-        ;
+});
 
